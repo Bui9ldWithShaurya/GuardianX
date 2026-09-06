@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Arya & GuardianX — AI-Powered Proactive Personal Safety Platform</title>
+  <meta name="description" content="Arya autonomous proactive incident assistant with real-time AI distress detection, live risk scoring, safe ride escorts, and police responder dashboard.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.ico">
+
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Leaflet CSS for Interactive Cartography -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app-root">
+
+  <!-- ================= 0. INITIAL LOGIN / SIGN-IN SCREEN ================= -->
+  <div class="login-view-wrapper active" id="view-login">
+    <div class="login-card">
+      
+      <!-- Brand & Shield Emblem -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+        <div style="width: 58px; height: 58px; border-radius: 16px; background: linear-gradient(135deg, var(--primary-container), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 0 25px rgba(107, 216, 203, 0.5);">
+          <span class="material-symbols-outlined" style="font-size: 34px;">shield</span>
+        </div>
+        <div>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin: 0;">GuardianX</h1>
+          <span style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">Powered by Arya AI Sentinel</span>
+        </div>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="role-switcher-row">
+        <button class="role-switch-btn active" id="role-select-citizen">
+          <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: middle;">person</span> Citizen Account
+        </button>
+        <button class="role-switch-btn" id="role-select-responder">
+          <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: middle;">local_police</span> Police / Dispatch
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form class="login-input-group" id="login-form">
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-on-surface-variant); display: block; margin-bottom: 4px;">Username</label>
+          <input type="text" class="login-input-field" id="login-username" placeholder="Username" value="" autocomplete="username" required>
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-on-surface-variant); display: block; margin-bottom: 4px;">Password</label>
+          <input type="password" class="login-input-field" id="login-password" placeholder="Password" value="" autocomplete="new-password" required>
+        </div>
+
+        <button type="submit" class="btn-affirmative-safe" style="padding: 0.85rem; font-size: 1rem; margin-top: 0.5rem;">
+          <span class="material-symbols-outlined">lock_open</span>
+          <span>Secure Sign In</span>
+        </button>
+      </form>
+
+      <!-- Biometric Quick Sign In -->
+      <button class="btn-biometric" id="btn-login-biometric">
+        <span class="material-symbols-outlined symbol-fill" style="color: var(--primary);">fingerprint</span>
+        <span>Sign In with Face ID / Fingerprint</span>
+      </button>
+
+      <!-- Guest Immediate SOS Bypass -->
+      <div class="guest-emergency-bypass-banner" id="btn-login-guest-sos">
+        <div style="display: flex; align-items: center; gap: 8px; text-align: left;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(239, 68, 68, 0.3); color: #ffb4ab; display: flex; align-items: center; justify-content: center;">
+            <span class="material-symbols-outlined symbol-fill" style="font-size: 20px;">emergency</span>
+          </div>
+          <div>
+            <strong style="font-size: 0.85rem; color: #ffffff; display: block;">In Immediate Danger?</strong>
+            <span style="font-size: 11px; color: #ffdad6;">Tap for Instant Guest SOS (No Login Needed)</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" style="color: #ffdad6; font-size: 20px;">chevron_right</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= MAIN APP CONTAINER ================= -->
+  <div class="app-wrapper">
+
+    <!-- Top Sticky Header -->
+    <header class="top-header">
+      <div class="brand-wrap" data-path="home">
+        <div class="brand-shield">
+          <span class="material-symbols-outlined" style="font-size: 20px;">shield</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="brand-name">GuardianX</span>
+            <div class="arya-pill">
+              <span class="arya-dot"></span>
+              <span>Arya Sentinel</span>
+            </div>
+          </div>
+          <span style="font-size: 11px; color: var(--text-on-surface-variant);" id="header-user-name">Elena Rostova</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Switch between Citizen View and Responder Command -->
+        <button class="icon-btn" data-path="responder-dashboard" title="Switch to Police Responder Dashboard" style="border-color: rgba(99,102,241,0.3); color: var(--secondary);">
+          <span class="material-symbols-outlined" style="font-size: 20px;">local_police</span>
+        </button>
+
+        <!-- Viewport Mode Switcher (Desktop vs Mobile) -->
+        <button class="icon-btn" id="btn-viewport-toggle" title="Toggle Desktop / Mobile Preview">
+          <span class="material-symbols-outlined" style="font-size: 20px;">desktop_windows</span>
+        </button>
+
+        <!-- Theme Mode Toggle -->
+        <button class="icon-btn btn-theme-toggle" title="Toggle High-Visibility Light/Dark Theme">
+          <span class="material-symbols-outlined" style="font-size: 20px;">light_mode</span>
+        </button>
+
+        <!-- User Profile Avatar & Logout -->
+        <div style="position: relative; cursor: pointer;" data-path="profile" id="header-user-avatar">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="User Profile" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-dark);">
+          <span style="position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--tertiary); border: 1.5px solid var(--bg-surface);"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Viewports Container -->
+    <main class="main-viewport">
+
+      <!-- ================= 1. HOME DASHBOARD VIEW ================= -->
+      <section class="view-section active" id="view-home">
+        
+        <!-- Ambient Status Banner -->
+        <div class="safety-card ambient-banner">
+          <div class="greeting-row">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h1 class="user-greeting" style="margin: 0;">Good evening, Elena</h1>
+                <span class="material-symbols-outlined symbol-fill" style="color: var(--tertiary); font-size: 20px;">verified_user</span>
+              </div>
+              <p class="sentinel-badge">Protected • <strong>Arya AI Sentinel</strong> continuous monitoring active</p>
+            </div>
+
+            <!-- Arya Orb Mini Visualizer -->
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--bg-container-high); display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 15px rgba(107,216,203,0.3);">
+              <div style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(107,216,203,0.35) 0%, transparent 70%); animation: pulse-dot 2.5s infinite;"></div>
+              <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">graphic_eq</span>
+            </div>
+          </div>
+
+          <!-- Telemetry Status Bar -->
+          <div class="telemetry-pills">
+            <div class="status-indicator">
+              <span class="ping-dot"></span>
+              <span style="color: var(--text-on-surface);">Status: All Clear • Downtown Zone</span>
+            </div>
+            <div class="device-stats">
+              <span style="display: flex; align-items: center; gap: 3px; color: var(--tertiary);">
+                <span class="material-symbols-outlined" style="font-size: 15px;">battery_charging_full</span> 94%
+              </span>
+              <span>•</span>
+              <span style="display: flex; align-items: center; gap: 3px; color: var(--primary);">
+                <span class="material-symbols-outlined" style="font-size: 15px;">cell_tower</span> 5G Ultra
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Microphone Access Permission Prompt / Card (Upfront Permission Check) -->
+        <div class="safety-card mic-permission-card" id="home-mic-permission-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <!-- 3D Microphone Aura Indicator -->
+              <div class="mic-3d-aura-wrap" id="home-mic-aura-indicator">
+                <div class="mic-aura-ring ring-1"></div>
+                <div class="mic-aura-ring ring-2"></div>
+                <div class="mic-aura-core">
+                  <span class="material-symbols-outlined symbol-fill" id="home-mic-core-icon" style="font-size: 22px; color: var(--primary);">mic</span>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong style="font-size: 0.95rem; color: #ffffff;">Microphone Sentinel Access</strong>
+                  <span class="module-tag" id="home-mic-status-badge" style="background: rgba(78,222,163,0.18); color: var(--tertiary); font-weight: 700;">24/7 ACTIVE SCAN</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--text-on-surface-variant); margin: 2px 0 0 0;" id="home-mic-status-desc">
+                  Autonomous ambient noise recording active. Arya is listening for shouting, glass breaks, and emergency distress signals.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tertiary);">
+              <span class="ping-dot" style="background: var(--tertiary); box-shadow: 0 0 8px var(--tertiary);"></span>
+              <span id="home-mic-telemetry-text">Audio Feed: Active • Live Decibel Scanning</span>
+            </div>
+
+            <button class="filter-chip" id="btn-grant-mic-permission" style="font-size: 11px; padding: 4px 12px; border-color: var(--primary); color: var(--primary); font-weight: 700;">
+              <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">verified</span> Check / Refresh Permission
+            </button>
+          </div>
+        </div>
+
+        <!-- Central Tactile Instant SOS Anchor -->
+        <div class="sos-anchor-card">
+          <div class="sos-outer-aura" id="sos-outer-aura"></div>
+          <div class="sos-inner-aura" id="sos-inner-aura"></div>
+
+          <!-- Tactile Ring Wrapper -->
+          <div class="sos-ring-wrapper" id="sos-ring-wrapper">
+            <!-- Circular SVG Progress Arc -->
+            <svg class="sos-svg-ring" viewBox="0 0 196 196">
+              <circle class="sos-track-circle" cx="98" cy="98" r="88"></circle>
+              <circle class="sos-progress-arc" id="sos-progress-arc" cx="98" cy="98" r="88"></circle>
+            </svg>
+
+            <!-- Press & Hold Button -->
+            <button class="sos-trigger-btn" id="sos-trigger-btn" aria-label="Hold 3 seconds for Emergency SOS Dispatch">
+              <div class="sos-icon-badge" id="sos-icon-badge">
+                <span class="material-symbols-outlined symbol-fill" style="font-size: 26px;">security</span>
+              </div>
+              <span class="sos-primary-text" id="sos-primary-label">INSTANT SOS</span>
+              <span class="sos-sub-text" id="sos-status-label">HOLD 3 SEC</span>
+            </button>
+          </div>
+
+          <!-- Premature Tap Guidance Tooltip -->
+          <div class="sos-guidance-tooltip" id="sos-tooltip">
+            <span class="material-symbols-outlined" style="font-size: 15px;">touch_app</span>
+            <span>Press and hold 3s to trigger</span>
+          </div>
+
+          <div class="sos-footer-status">
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--tertiary);">vibration</span>
+            <span>Haptic feedback & silent 911 dispatch ready</span>
+          </div>
+        </div>
+
+        <!-- Fake Voice / Deception Caller Quick Launcher -->
+        <button class="btn-fake-voice-trigger" id="btn-trigger-fake-call">
+          <span class="material-symbols-outlined symbol-fill" style="color: var(--primary);">call</span>
+          <span>📞 Fake Voice / Deception Caller (Deter Threat)</span>
+        </button>
+
+        <!-- AI Rolling Risk Score & Distress Bar -->
+        <div class="safety-card" style="border-color: rgba(107, 216, 203, 0.2);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">model_training</span>
+              <strong style="font-size: 0.95rem; color: var(--text-on-surface);">Arya AI Rolling Risk Engine</strong>
+            </div>
+            <span class="module-tag" id="ai-risk-status-badge">SERENE / ALL CLEAR</span>
+          </div>
+
+          <!-- Risk Gauge Bar -->
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 11px; color: var(--text-on-surface-variant);">Distress Score: <strong style="color: var(--primary); font-size: 1.1rem;" id="ai-risk-score-value">14</strong>/100</span>
+            <span style="font-size: 10px; color: var(--text-muted);">Auto-Escalates at &gt;85</span>
+          </div>
+
+          <div style="width: 100%; height: 8px; border-radius: var(--radius-full); background: var(--bg-container-highest); overflow: hidden;">
+            <div id="ai-risk-gauge-fill" style="width: 14%; height: 100%; background: linear-gradient(90deg, #0d9488, #10b981); transition: width 0.3s ease, background 0.3s ease;"></div>
+          </div>
+
+          <!-- Score Breakdown -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 0.75rem; text-align: center; font-size: 11px;">
+            <div style="background: var(--bg-container); padding: 4px; border-radius: var(--radius-sm);">
+              <span style="color: var(--text-muted); display: block;">Acoustic Tone</span>
+              <strong style="color: var(--tertiary);" id="ai-acoustic-score-val">12%</strong>
+            </div>
+            <div style="background: var(--bg-container); padding: 4px; border-radius: var(--radius-sm);">
+              <span style="color: var(--text-muted); display: block;">Keyword Flags</span>
+              <strong style="color: var(--primary);" id="ai-transcript-score-val">0%</strong>
+            </div>
+            <div style="background: var(--bg-container); padding: 4px; border-radius: var(--radius-sm);">
+              <span style="color: var(--text-muted); display: block;">Context Anomaly</span>
+              <strong style="color: var(--secondary);" id="ai-context-score-val">10%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2x2 Bento Modules Grid -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px;">
+            <span style="font-weight: 700; font-size: 1rem; color: var(--text-on-surface);">Safety Modules</span>
+            <span style="font-size: 11px; font-weight: 600; color: var(--primary);">4 Active Modules</span>
+          </div>
+
+          <div class="bento-grid">
+            <!-- Safe Ride -->
+            <div class="module-card" id="quick-card-safe-ride">
+              <div class="module-header">
+                <div class="module-icon-wrap icon-indigo">
+                  <span class="material-symbols-outlined">directions_car</span>
+                </div>
+                <span class="module-tag" style="background: rgba(99,102,241,0.15); color: var(--secondary);">Radar Active</span>
+              </div>
+              <div class="module-body">
+                <h3 class="module-title">Safe Ride</h3>
+                <p class="module-desc">Escorted journey & route anomaly monitoring with live telemetry.</p>
+              </div>
+            </div>
+
+            <!-- Safety Timer / Monitoring -->
+            <div class="module-card" id="quick-card-timer">
+              <div class="module-header">
+                <div class="module-icon-wrap icon-emerald">
+                  <span class="material-symbols-outlined">mic</span>
+                </div>
+                <span class="module-tag" style="background: rgba(78,222,163,0.15); color: var(--tertiary);">AI Distress</span>
+              </div>
+              <div class="module-body">
+                <h3 class="module-title">AI Monitoring</h3>
+                <p class="module-desc">Live speech VAD, tone analysis & solo protection timer.</p>
+              </div>
+            </div>
+
+            <!-- Live Location -->
+            <div class="module-card" id="quick-card-location">
+              <div class="module-header">
+                <div class="module-icon-wrap icon-teal">
+                  <span class="material-symbols-outlined">share_location</span>
+                </div>
+                <span class="module-tag" style="background: rgba(107,216,203,0.15); color: var(--primary);">3 Guardians</span>
+              </div>
+              <div class="module-body">
+                <h3 class="module-title">Live Location</h3>
+                <p class="module-desc">Secure end-to-end encrypted beacon broadcast to your inner circle.</p>
+              </div>
+            </div>
+
+            <!-- Nearby Safe Havens -->
+            <div class="module-card" id="quick-card-havens">
+              <div class="module-header">
+                <div class="module-icon-wrap icon-amber">
+                  <span class="material-symbols-outlined">domain_verification</span>
+                </div>
+                <span class="module-tag" style="background: rgba(251,191,36,0.15); color: var(--warning);">24/7 Verified</span>
+              </div>
+              <div class="module-body">
+                <h3 class="module-title">Nearby Help</h3>
+                <p class="module-desc">Illuminated safe zones, 24/7 police kiosks & emergency clinics.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= 2. SAFETY MAP & NEARBY HAVENS VIEW ================= -->
+      <section class="view-section" id="view-safety-map">
+        
+        <!-- Active Leaflet Map Viewport Container -->
+        <div class="map-container-wrap" id="map-container-wrapper">
+          <!-- Top Turn-by-Turn HUD -->
+          <div class="map-hud-top">
+            <div class="hud-direction-card">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div class="direction-arrow">
+                  <span class="material-symbols-outlined" id="safety-map-hud-icon" style="font-size: 20px;">explore</span>
+                </div>
+                <div>
+                  <div style="display: flex; align-items: baseline; gap: 4px;">
+                    <strong style="font-size: 0.95rem; color: #ffffff;" id="safety-map-hud-title">Nearby Safe Havens</strong>
+                    <span style="font-size: 10px; color: var(--primary); font-weight: 700;" id="safety-map-hud-status">5 VERIFIED</span>
+                  </div>
+                  <span style="font-size: 0.78rem; color: var(--text-on-surface-variant);" id="safety-map-hud-subtitle">Montgomery St Safe Corridor • 24/7 Illuminated Zones</span>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <button class="icon-btn" id="map-recenter-btn" title="Recenter to My Position" style="width: 34px; height: 34px;">
+                  <span class="material-symbols-outlined" style="font-size: 17px;">my_location</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="leaflet-map"></div>
+        </div>
+
+        <!-- Filter Chips Bar -->
+        <div class="map-filter-scroll">
+          <button class="filter-chip map-filter-chip active" data-filter="all">All Safe Points (5)</button>
+          <button class="filter-chip map-filter-chip" data-filter="police">👮 Police Kiosks (2)</button>
+          <button class="filter-chip map-filter-chip" data-filter="medical">🏥 Urgent Care (1)</button>
+          <button class="filter-chip map-filter-chip" data-filter="transit">🚇 Transit Hubs (1)</button>
+          <button class="filter-chip map-filter-chip" data-filter="store">🏪 24/7 Safe Stores (1)</button>
+        </div>
+
+        <!-- Verified Safe Havens List -->
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 700; font-size: 1rem; color: var(--text-on-surface);">Verified Safe Havens Nearby</span>
+            <span style="font-size: 11px; color: var(--tertiary); font-weight: 600;">Within 0.5 miles</span>
+          </div>
+
+          <div id="safe-havens-cards-list" style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <!-- Dynamically populated via map.js -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 3. SAFE RIDE & ACTIVE ESCORT VIEW ================= -->
+      <section class="view-section" id="view-safe-ride">
+        
+        <!-- Header Status -->
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-full); background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);">
+            <span class="arya-dot" style="background: var(--secondary);"></span>
+            <span style="font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.05em;">Safe Ride • Active Escort</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-on-surface-variant); background: var(--bg-container); padding: 4px 10px; border-radius: var(--radius-full);">
+            <span class="material-symbols-outlined symbol-fill" style="font-size: 14px; color: var(--tertiary);">verified</span>
+            <span>Corridor Match <strong style="color: var(--tertiary);">99.8%</strong></span>
+          </div>
+        </div>
+
+        <!-- Origin / Destination Waypoints Card -->
+        <div class="safety-card">
+          <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+            <div style="display: flex; flex-direction: column; align-items: center; padding-top: 4px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--secondary);"></span>
+              <span style="width: 2px; height: 28px; background: linear-gradient(to bottom, var(--secondary), var(--primary)); margin: 2px 0;"></span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></span>
+            </div>
+
+            <div style="flex: 1;">
+              <div>
+                <span style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Origin</span>
+                <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-on-surface); margin: 0;">Financial District Metro • Plaza 4</p>
+              </div>
+              <div style="margin-top: 0.65rem;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 10.5px; color: var(--primary); text-transform: uppercase; font-weight: 700;">Destination</span>
+                  <span style="font-size: 10px; padding: 1px 6px; border-radius: var(--radius-full); background: rgba(107, 216, 203, 0.15); color: var(--primary); font-weight: 600;">Home Safe Zone</span>
+                </div>
+                <p style="font-size: 0.95rem; font-weight: 800; color: #ffffff; margin: 0;">1428 Elmhurst Way, Apt 3B</p>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-container-high); display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: 0 0 10px rgba(107,216,203,0.3);">
+                <span class="material-symbols-outlined" style="font-size: 20px;">graphic_eq</span>
+              </div>
+              <span style="font-size: 9.5px; font-weight: 700; color: var(--primary);">Arya Audio</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Stats Bento -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+          <div style="background: var(--bg-container-low); border-radius: var(--radius-md); padding: 0.75rem; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <span style="font-size: 10.5px; color: var(--text-on-surface-variant); display: block;">Estimated ETA</span>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px; margin: 2px 0;">
+              <strong style="font-size: 1.35rem; color: var(--primary); font-weight: 800;">14</strong>
+              <span style="font-size: 11px; color: var(--primary); font-weight: 600;">mins</span>
+            </div>
+            <span style="font-size: 10px; color: var(--tertiary);">11:42 PM arrival</span>
+          </div>
+
+          <div style="background: var(--bg-container-low); border-radius: var(--radius-md); padding: 0.75rem; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <span style="font-size: 10.5px; color: var(--text-on-surface-variant); display: block;">Remaining</span>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px; margin: 2px 0;">
+              <strong style="font-size: 1.35rem; color: var(--text-on-surface); font-weight: 800;">4.2</strong>
+              <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">mi</span>
+            </div>
+            <span style="font-size: 10px; color: var(--text-on-surface-variant);">Safe Corridor #1</span>
+          </div>
+
+          <div style="background: var(--bg-container-low); border-radius: var(--radius-md); padding: 0.75rem; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <span style="font-size: 10.5px; color: var(--text-on-surface-variant); display: block;">Velocity</span>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px; margin: 2px 0;">
+              <strong style="font-size: 1.35rem; color: var(--tertiary); font-weight: 800;">24</strong>
+              <span style="font-size: 11px; color: var(--tertiary); font-weight: 600;">mph</span>
+            </div>
+            <span style="font-size: 10px; color: var(--tertiary);">Smooth Flow</span>
+          </div>
+        </div>
+
+        <!-- Driver & Vehicle Details -->
+        <div class="safety-card" style="padding: 0.85rem 1rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Dawit M." style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--outline-variant);">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong style="font-size: 0.95rem; color: var(--text-on-surface);">Uber • Dawit M.</strong>
+                  <span style="display: flex; align-items: center; gap: 2px; font-size: 11px; color: var(--warning); font-weight: 700;">
+                    <span class="material-symbols-outlined symbol-fill" style="font-size: 13px;">star</span> 4.98
+                  </span>
+                </div>
+                <span style="font-size: 11px; color: var(--text-on-surface-variant);">White Toyota Camry • Plate <strong>#7XYZ92</strong></span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 6px;">
+              <a href="tel:5550199" class="icon-btn" title="Call Driver" style="text-decoration: none;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">phone</span>
+              </a>
+              <button class="icon-btn" title="Message Driver">
+                <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Guardians Watching Live Strip -->
+        <div class="safety-card" style="padding: 0.75rem 1rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined symbol-fill" style="font-size: 16px; color: var(--tertiary);">visibility</span>
+              <strong style="font-size: 0.85rem; color: var(--text-on-surface);">3 Guardians Watching Live</strong>
+            </div>
+            <span style="font-size: 10px; font-weight: 700; color: var(--tertiary); text-transform: uppercase;">STREAM SECURE</span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; margin-left: 6px;">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&auto=format&fit=crop&q=80" alt="Mom" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg-surface); margin-left: -6px;">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80" alt="Marcus" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg-surface); margin-left: -6px;">
+              <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&auto=format&fit=crop&q=80" alt="David" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg-surface); margin-left: -6px;">
+            </div>
+            <span style="font-size: 11px; color: var(--text-on-surface-variant);">Mom, Marcus, David Vance</span>
+          </div>
+        </div>
+
+        <!-- Safe Ride Actions -->
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.5rem;">
+          <button class="btn-affirmative-safe" id="safeCheckInBtn">
+            <span class="material-symbols-outlined symbol-fill">verified_user</span>
+            <span>I'm Safe • Check In Now</span>
+          </button>
+
+          <button style="width: 100%; padding: 0.85rem; border-radius: var(--radius-lg); background: var(--bg-container-high); border: 1px solid rgba(239,68,68,0.3); color: var(--error); font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;" id="reportDeviationBtn">
+            <span class="material-symbols-outlined">warning_amber</span>
+            <span>Report Route Deviation / Alert Circle</span>
+          </button>
+
+          <button style="background: none; border: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; padding: 0.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;" id="endJourneyBtn">
+            <span class="material-symbols-outlined" style="font-size: 16px;">stop_circle</span>
+            <span>End Journey & Archive Trip</span>
+          </button>
+        </div>
+
+      </section>
+
+
+      <!-- ================= 4. MONITORING & AI DISTRESS DETECTION VIEW ================= -->
+      <section class="view-section" id="view-monitoring">
+        
+        <!-- Live AI Speech Recognition & VAD Hub -->
+        <div class="safety-card card-glow-teal">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">record_voice_over</span>
+              <strong style="font-size: 1rem; color: #ffffff;">AI Speech & Acoustic Distress VAD</strong>
+            </div>
+            <button class="filter-chip" id="btn-toggle-ai-mic" style="border-color: var(--primary); color: var(--primary); font-weight: 700;">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">mic</span> Start Live Mic AI
+            </button>
+          </div>
+
+          <!-- Interim Speech Feedback -->
+          <div style="background: var(--bg-container); border-radius: var(--radius-md); padding: 0.75rem; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.75rem;">
+            <span style="font-size: 11px; color: var(--tertiary); font-weight: 700; text-transform: uppercase;">Live Audio Pipeline</span>
+            <p style="font-size: 0.85rem; color: var(--text-on-surface); margin: 4px 0 0 0;" id="ai-interim-transcript">
+              Listening for distress keywords ("help", "stop", "let go", "who are you", "Arya help")...
+            </p>
+          </div>
+
+          <!-- Spottable Keyword Tags -->
+          <div style="margin-bottom: 0.75rem;">
+            <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Detected Distress Flags:</span>
+            <div id="ai-keyword-tags" style="display: flex; flex-wrap: wrap; gap: 4px;">
+              <span style="font-size: 11px; color: var(--text-muted);">No distress keywords spotted.</span>
+            </div>
+          </div>
+
+          <!-- Live Transcript Stream -->
+          <div>
+            <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Real-Time Audio Transcript Feed:</span>
+            <div id="ai-live-transcript-feed" style="max-height: 140px; overflow-y: auto;">
+              <!-- Populated by ai_distress.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Speech Simulation Chips -->
+        <div class="safety-card">
+          <strong style="font-size: 0.92rem; color: #ffffff; display: block; margin-bottom: 0.5rem;">Simulate AI Speech & Risk Trigger</strong>
+          <p style="font-size: 0.78rem; color: var(--text-on-surface-variant); margin-bottom: 0.75rem;">
+            Tap any simulated speech phrase to test real-time NLP classification and risk escalation:
+          </p>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;" id="ai-sim-phrases-container">
+            <button class="filter-chip distress-sim-chip" data-phrase="Arya, help me! Someone is following me!" data-acoustic="90" style="border-color: var(--error); color: var(--error);">
+              🚨 "Arya, help me! Someone is following me!" (Critical)
+            </button>
+            <button class="filter-chip distress-sim-chip" data-phrase="Please stop, let me go right now!" data-acoustic="80" style="border-color: var(--warning); color: var(--warning);">
+              ⚠️ "Please stop, let me go!" (High)
+            </button>
+            <button class="filter-chip distress-sim-chip" data-phrase="Who are you? Don't touch me!" data-acoustic="70">
+              ⚡ "Who are you? Don't touch me!"
+            </button>
+            <button class="filter-chip distress-sim-chip" data-phrase="Just walking back to the apartment now." data-acoustic="10" style="border-color: var(--tertiary); color: var(--tertiary);">
+              ✅ "Just walking back now." (Normal)
+            </button>
+          </div>
+        </div>
+
+        <!-- Solo Walk Safety Timer -->
+        <div class="safety-card" style="text-align: center;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--tertiary); text-transform: uppercase;">
+            Solo Walk Sentinel Protection
+          </span>
+
+          <div style="margin: 0.75rem auto;">
+            <span style="font-size: 2.8rem; font-weight: 800; color: #ffffff;" id="safety-timer-display">15:00</span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 1rem;">
+            <button class="filter-chip timer-preset-btn" data-mins="5">5 min</button>
+            <button class="filter-chip timer-preset-btn active" data-mins="15">15 min</button>
+            <button class="filter-chip timer-preset-btn" data-mins="30">30 min</button>
+            <button class="filter-chip timer-preset-btn" data-mins="60">1 hour</button>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-affirmative-safe" id="btn-start-safety-timer" style="flex: 1; padding: 0.75rem; font-size: 0.95rem;">
+              <span class="material-symbols-outlined">timer</span>
+              <span>Start Protection Timer</span>
+            </button>
+            <button class="icon-btn" id="btn-cancel-safety-timer" title="Reset Timer" style="width: 44px; height: 44px; border-radius: var(--radius-md);">
+              <span class="material-symbols-outlined">restart_alt</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= 5. POLICE / RESPONDER COMMAND DASHBOARD VIEW ================= -->
+      <section class="view-section" id="view-responder-dashboard">
+        
+        <!-- Command Center Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: #1000a9; border: 2px solid #6366f1; color: #ffffff; display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined" style="font-size: 20px;">local_police</span>
+            </div>
+            <div>
+              <strong style="font-size: 1.1rem; color: #ffffff; display: block;">SFPD Emergency Command Portal</strong>
+              <span style="font-size: 11px; color: var(--secondary);">Live Incident Intake & Case Dossiers</span>
+            </div>
+          </div>
+          <span class="module-tag" style="background: rgba(239,68,68,0.2); color: #ffb4ab; font-weight: 700;">LIVE DISPATCH FEED</span>
+        </div>
+
+        <div class="responder-grid-layout">
+          
+          <!-- Left: Incident Queue -->
+          <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Active Incident Queue (3)</span>
+            <div id="responder-incident-queue" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <!-- Populated by responder.js -->
+            </div>
+          </div>
+
+          <!-- Right: Live Case Dossier -->
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <div class="safety-card" style="border: 2px solid rgba(239,68,68,0.4); background: var(--bg-container-low);">
+              
+              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                <div>
+                  <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 0;" id="dossier-case-id">Case #GX-99201 Dossier</h3>
+                  <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;" id="dossier-victim-name">Elena Rostova, 26 yrs (O+)</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 1.3rem; font-weight: 800; color: var(--error);" id="dossier-risk-val">88</span>
+                  <span style="display: block; font-size: 9px; color: var(--text-muted); text-transform: uppercase;">AI Risk Score</span>
+                </div>
+              </div>
+
+              <!-- Risk Score Progress -->
+              <div style="width: 100%; height: 6px; border-radius: var(--radius-full); background: var(--bg-container-highest); overflow: hidden; margin-bottom: 0.75rem;">
+                <div id="dossier-risk-gauge" style="width: 88%; height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444);"></div>
+              </div>
+
+              <!-- Medical & Emergency Profile Details -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin-bottom: 0.75rem;">
+                <div style="background: var(--bg-container); padding: 0.5rem 0.75rem; border-radius: var(--radius-md);">
+                  <span style="font-size: 10.5px; color: var(--text-muted); display: block;">Medical / Allergies</span>
+                  <strong style="color: #ffb4ab;" id="dossier-medical-notes">Severe Asthma (Carries Albuterol)</strong>
+                </div>
+                <div style="background: var(--bg-container); padding: 0.5rem 0.75rem; border-radius: var(--radius-md);">
+                  <span style="font-size: 10.5px; color: var(--text-muted); display: block;">Primary Guardian</span>
+                  <strong style="color: var(--text-on-surface);" id="dossier-contact">Marcus Vance • 555-0199</strong>
+                </div>
+              </div>
+
+              <!-- Trigger Source & Assigned Unit -->
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; background: var(--bg-container); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.75rem;">
+                <div>
+                  <span style="color: var(--text-muted);">Trigger:</span> <strong style="color: var(--warning);" id="dossier-trigger-source">AI Acoustic Distress</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted);">Assigned Unit:</span> <strong style="color: var(--secondary);" id="dossier-assigned-unit">SFPD Patrol #402</strong> (<span id="dossier-unit-eta">3 mins</span>)
+                </div>
+              </div>
+
+              <!-- Live GPS Trail Map -->
+              <div style="height: 220px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 0.75rem; border: 1px solid rgba(255,255,255,0.1);">
+                <div id="responder-leaflet-map" style="width: 100%; height: 100%;"></div>
+              </div>
+
+              <!-- Live Audio Clip Player & Transcript Feed -->
+              <div style="background: var(--bg-container); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                  <span style="font-size: 11px; font-weight: 700; color: var(--tertiary);">LIVE AUDIO TRANSCRIPT & BEACON</span>
+                  <button class="filter-chip" id="btn-dossier-play-audio" style="padding: 2px 8px; font-size: 10.5px;">
+                    <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">volume_up</span> Play Audio Snippet
+                  </button>
+                </div>
+
+                <div id="dossier-transcript-feed" style="max-height: 120px; overflow-y: auto;">
+                  <!-- Populated by responder.js -->
+                </div>
+              </div>
+
+              <!-- Responder Action Bar -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem;">
+                <button class="filter-chip" id="btn-responder-ack" style="font-weight: 700; padding: 0.6rem 0.4rem; text-align: center;">
+                  Acknowledge
+                </button>
+                <button class="filter-chip" id="btn-responder-dispatch" style="background: var(--error-bright); color: #ffffff; font-weight: 800; padding: 0.6rem 0.4rem; text-align: center;">
+                  Dispatch Unit
+                </button>
+                <button class="filter-chip" id="btn-responder-resolve" style="background: var(--tertiary-dark); color: #ffffff; font-weight: 700; padding: 0.6rem 0.4rem; text-align: center;">
+                  Mark Resolved
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= 6. PROFILE & SETTINGS VIEW ================= -->
+      <section class="view-section" id="view-profile">
+        
+        <!-- User Profile Card -->
+        <div class="safety-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80" alt="Elena Rostova" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--primary);">
+              <div>
+                <h2 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin: 0;">Elena Rostova</h2>
+                <span style="font-size: 0.8rem; color: var(--text-on-surface-variant);">GuardianX Shield #GX-99201</span>
+                <div style="display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                  <span class="arya-pill" style="font-size: 10px; padding: 1px 6px;">
+                    <span class="arya-dot"></span> Premium Sentinel Tier
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button class="filter-chip" id="btn-logout" style="border-color: var(--error); color: var(--error); font-size: 11px; padding: 4px 10px;">
+              <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">logout</span> Log Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Emergency Inner Circle Roster -->
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined symbol-fill" style="color: var(--primary); font-size: 20px;">supervised_user_circle</span>
+              <span style="font-weight: 700; font-size: 1rem; color: var(--text-on-surface);">Emergency Contacts (<span id="contacts-count-badge" style="color: var(--primary);">3/5</span>)</span>
+            </div>
+            <button class="filter-chip" id="btn-add-contact" style="font-size: 11px; padding: 4px 10px; border-color: var(--primary); color: var(--primary); font-weight: 700;">
+              <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: middle;">person_add</span> Add Emergency Contact
+            </button>
+          </div>
+
+          <!-- Dynamic Contacts Container -->
+          <div id="contacts-list-container" style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <!-- Populated dynamically via ContactsEngine in contacts.js -->
+          </div>
+        </div>
+
+        <!-- Security & PIN Settings -->
+        <div class="safety-card">
+          <strong style="font-size: 0.95rem; color: var(--text-on-surface); display: block; margin-bottom: 0.75rem;">Security & SOS Protocol</strong>
+          <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.85rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span>Safe PIN Verification</span>
+              <strong style="color: var(--primary);">•••• (Default 1234)</strong>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span>Silent Duress Mode</span>
+              <span style="color: var(--tertiary); font-weight: 600;">Enabled</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span>911 Auto-Relay Emergency Bridge</span>
+              <span style="color: var(--tertiary); font-weight: 600;">Active</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- ================= FULLSCREEN OVERLAYS ================= -->
+
+    <!-- 1. 10-Second Emergency Active Countdown Overlay -->
+    <div class="fullscreen-overlay" id="emergency-overlay">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="ping-dot" style="background: var(--error); box-shadow: 0 0 12px var(--error);"></span>
+          <span style="font-size: 11px; font-weight: 700; color: var(--error); text-transform: uppercase; letter-spacing: 0.05em;">Emergency Dispatch Pending</span>
+        </div>
+        <span class="module-tag" style="background: rgba(107,216,203,0.15); color: var(--primary);">GPS Live Relay</span>
+      </div>
+
+      <div style="text-align: center; margin: auto 0;">
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Are you okay, Elena?</h2>
+        <div style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 12px; border-radius: var(--radius-full); background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ff9b9b; font-size: 0.78rem; font-weight: 600;">
+          <span class="material-symbols-outlined" style="font-size: 14px;">warning</span>
+          <span id="countdown-trigger-reason">Transit Anomaly Flagged • SOS Hold Triggered</span>
+        </div>
+
+        <div class="countdown-visualizer">
+          <div class="countdown-ping-ring"></div>
+          <svg style="position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg);" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="72" fill="transparent" stroke="rgba(255,255,255,0.1)" stroke-width="8"></circle>
+            <circle id="countdown-progress-ring" cx="80" cy="80" r="72" fill="transparent" stroke="#ef4444" stroke-width="8" stroke-linecap="round" stroke-dasharray="452.39" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));"></circle>
+          </svg>
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;">
+            <span class="countdown-number-val" id="countdown-number">10</span>
+            <span style="font-size: 10px; font-weight: 700; color: #ff9b9b; letter-spacing: 0.1em; text-transform: uppercase;">SECONDS</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.82rem; color: var(--text-on-surface-variant); max-width: 280px; margin: 0 auto 1rem auto;">
+          Dispatching high-priority 911 relay & inner circle emergency distress signal when timer expires.
+        </p>
+
+        <button class="btn-affirmative-safe" id="btn-i-am-safe">
+          <span class="material-symbols-outlined symbol-fill">check_circle</span>
+          <span>I AM SAFE</span>
+        </button>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.65rem;">
+          <button style="padding: 0.65rem; border-radius: var(--radius-md); background: var(--bg-container); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;" id="btn-call-marcus">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--primary);">phone_in_talk</span>
+            <span>Call Emergency Contacts</span>
+          </button>
+          <button style="padding: 0.65rem; border-radius: var(--radius-md); background: var(--bg-container); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;" id="btn-safe-pin">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--tertiary);">pin</span>
+            <span>Safe PIN Dismiss</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem;">
+        <button style="background: none; border: none; color: var(--secondary); display: flex; align-items: center; gap: 4px; cursor: pointer;" id="btn-silent-duress">
+          <span class="material-symbols-outlined" style="font-size: 16px;">visibility_off</span>
+          <span>Silent Duress Mode</span>
+        </button>
+        <button style="background: none; border: none; color: var(--text-muted); cursor: pointer;" id="btn-dismiss-countdown">
+          <span>Dismiss</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- 2. Active Emergency 911 Broadcast & Live Tracking Overlay (Post-Countdown) -->
+    <div class="fullscreen-overlay" id="dispatch-active-overlay" style="background: rgba(10, 6, 16, 0.98); padding: 1.25rem 1.15rem 7.5rem 1.15rem; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+      
+      <!-- Top Status Banner -->
+      <div class="crisis-pulse-header" style="padding: 0.85rem 1.1rem; margin-bottom: 0.65rem;">
+        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(239, 68, 68, 0.3); border: 2px solid #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);">
+          <span class="material-symbols-outlined symbol-fill" style="font-size: 26px; color: #ffdad6;">local_police</span>
+        </div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+            <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: #ffffff; letter-spacing: -0.01em;" id="dispatch-status-title">Help is on the way</h2>
+            <span class="module-tag" style="background: rgba(239, 68, 68, 0.35); color: #ffdad6; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.5);" id="dispatch-unit-eta-badge">1 MIN</span>
+          </div>
+          <p style="font-size: 0.82rem; color: #ffb4ab; font-weight: 600; margin: 0;" id="dispatch-responder-details">
+            SFPD Patrol Unit #402 Arriving at Scene • 1 MIN
+          </p>
+        </div>
+      </div>
+
+      <!-- Instant SOS Synchronized Risk Status Card -->
+      <div id="dispatch-instant-sos-status-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1.5px solid rgba(239, 68, 68, 0.55); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.1rem;">🚨</span>
+            <span style="font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: #ffdad6; text-transform: uppercase;">INSTANT SOS ACTIVATED</span>
+          </div>
+          <span id="dispatch-incident-status-pill" style="font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.35); color: #ffffff; border: 1px solid #ef4444;">ACTIVE</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+          <div style="background: rgba(0, 0, 0, 0.4); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div style="font-size: 0.65rem; font-weight: 700; color: #ffb4ab; text-transform: uppercase; letter-spacing: 0.05em;">RISK LEVEL</div>
+            <div id="dispatch-live-severity-val" style="font-size: 1.15rem; font-weight: 900; color: #ef4444; letter-spacing: -0.01em;">CRITICAL</div>
+          </div>
+          <div style="background: rgba(0, 0, 0, 0.4); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div style="font-size: 0.65rem; font-weight: 700; color: #ffb4ab; text-transform: uppercase; letter-spacing: 0.05em;">RISK SCORE</div>
+            <div style="display: flex; align-items: baseline; gap: 3px;">
+              <span id="dispatch-live-risk-val" style="font-size: 1.15rem; font-weight: 900; color: #ef4444;">90</span>
+              <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">/ 100</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: #cbd5e1; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 6px;">
+          <span>INCIDENT: <strong id="dispatch-live-incident-ref" style="color: #ffffff; font-family: monospace; font-size: 0.82rem;">GX-000000</strong></span>
+          <span style="display: flex; align-items: center; gap: 4px;">
+            <span class="dispatch-live-beacon-dot" style="width: 6px; height: 6px; background: #22c55e;"></span>
+            <span style="color: #86efac; font-size: 0.7rem; font-weight: 700;">LIVE CAD SYNC</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Prominent Live Tracking Map View (Uber-Style Street Map) -->
+      <div class="dispatch-map-card">
+        <!-- Floating HUD Over Map -->
+        <div class="dispatch-map-hud-top">
+          <div class="dispatch-hud-pill">
+            <div class="dispatch-live-beacon-dot"></div>
+            <span style="font-size: 11px; font-weight: 700; color: #ffffff;">LIVE GPS & RESPONDER ROUTE</span>
+          </div>
+          <button class="icon-btn" id="dispatch-map-recenter-btn" title="Recenter Map" style="width: 34px; height: 34px; background: rgba(11, 19, 38, 0.9); border-color: rgba(255, 255, 255, 0.2); color: #ffffff;">
+            <span class="material-symbols-outlined" style="font-size: 17px;">my_location</span>
+          </button>
+        </div>
+
+        <!-- Leaflet Dispatch Map Element -->
+        <div id="live-dispatch-leaflet-map"></div>
+
+        <!-- Floating HUD Bottom Info Strip -->
+        <div class="dispatch-map-hud-bottom">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined symbol-fill" style="font-size: 14px; color: var(--tertiary);">fmd_good</span>
+              <span style="color: var(--text-on-surface);">Your GPS: <strong>Bush & Montgomery St</strong></span>
+            </div>
+            <span style="color: var(--primary); font-weight: 700;">Incoming SFPD Unit #402</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary De-escalation Controls (Positioned Immediately Below Map) -->
+      <div style="display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.65rem;">
+        <!-- Slide to Cancel Alert Rail -->
+        <div>
+          <div class="slide-rail-track" id="slide-cancel-rail" style="height: 54px;">
+            <span class="slide-track-text" style="font-size: 0.8rem;">SLIDE TO CANCEL ALERT ▶</span>
+            <div class="slide-thumb" id="slide-cancel-thumb" style="width: 46px; height: 46px; top: 3px; left: 3px;">
+              <span class="material-symbols-outlined" style="font-size: 22px;">chevron_right</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safe PIN Prompt Button -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-container-low); padding: 0.55rem 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.06);">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--tertiary);">pin</span>
+            <span style="font-size: 0.8rem; color: var(--text-on-surface);">Need to verify false alarm?</span>
+          </div>
+          <button class="filter-chip" id="btn-dispatch-safe-pin" style="padding: 4px 12px; font-size: 0.78rem; border-color: var(--tertiary); color: var(--tertiary); font-weight: 700;">
+            Enter Safe PIN
+          </button>
+        </div>
+      </div>
+
+      <!-- Acoustic Hazard & Threat Scanner (3D Audio Sensor & Screaming Detection) -->
+      <div class="threat-analysis-card" id="dispatch-threat-analysis-card" style="margin-top: 0.75rem; background: rgba(18, 12, 28, 0.9); border-color: rgba(239, 68, 68, 0.4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <!-- 3D Pulse Aura Icon -->
+            <div class="mic-3d-aura-wrap" style="width: 32px; height: 32px;">
+              <div class="mic-aura-ring ring-1"></div>
+              <div class="mic-aura-core" style="width: 28px; height: 28px; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);">
+                <span class="material-symbols-outlined symbol-fill" style="font-size: 16px; color: #ffb4ab;">hearing</span>
+              </div>
+            </div>
+            <div>
+              <strong style="font-size: 0.92rem; color: #ffffff; display: block;">Live Emergency Acoustic Stream</strong>
+              <span style="font-size: 10.5px; color: #ffb4ab;" id="dispatch-scanner-auto-status">Automated Scream & Threat Detection</span>
+            </div>
+          </div>
+          <span class="module-tag" style="background: rgba(239,68,68,0.25); color: #ffb4ab; font-weight: 700;" id="dispatch-ambient-scan-status-tag">ACTIVE 911 AUDIO</span>
+        </div>
+
+        <!-- 3D Pulsing Circular Noise Button & Aura Container -->
+        <div class="circular-3d-audio-wrapper">
+          <div class="circular-3d-audio-container">
+            <div class="circular-aura-ripple ripple-outer"></div>
+            <div class="circular-aura-ripple ripple-mid"></div>
+            <div class="circular-aura-ripple ripple-inner"></div>
+
+            <button class="btn-circular-3d-audio recording-active" id="dispatch-btn-record-ambient-noise" aria-label="3D Pulsing Ambient Audio Sensor">
+              <div class="circular-3d-surface">
+                <div class="circular-3d-inner-glow"></div>
+                <div class="circular-3d-core">
+                  <span class="material-symbols-outlined" id="dispatch-ambient-record-btn-icon">graphic_eq</span>
+                  <div class="circular-live-db" id="dispatch-live-db-badge">14 dB</div>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <div class="circular-audio-meta">
+            <span class="circular-audio-title" id="dispatch-ambient-record-btn-label">Autonomous 911 Acoustic Sensor</span>
+            <span class="circular-audio-desc" id="dispatch-ambient-record-sub-label">Listening for Screams & Acoustic Anomalies</span>
+          </div>
+        </div>
+
+        <!-- Threat Score / Level Indicator Display -->
+        <div class="threat-score-panel" id="dispatch-threat-score-display-panel" style="padding: 0.75rem; margin-top: 0.5rem;">
+          <div class="threat-score-header">
+            <div>
+              <span style="font-size: 10.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Real-Time Threat Level</span>
+              <div class="threat-score-number-wrap">
+                <span class="threat-score-number" id="dispatch-threat-score-val" style="color: var(--error); font-size: 1.7rem;">14</span>
+                <span class="threat-score-max" style="font-size: 0.95rem;">/100</span>
+              </div>
+            </div>
+
+            <span class="threat-level-badge level-low" id="dispatch-threat-level-badge">LOW RISK</span>
+          </div>
+
+          <!-- Threat Gauge Fill Bar -->
+          <div class="threat-gauge-track" style="height: 8px;">
+            <div class="threat-gauge-fill" id="dispatch-threat-gauge-fill" style="width: 14%; background: linear-gradient(90deg, #0d9488, #10b981);"></div>
+          </div>
+
+          <!-- Real-Time Environmental Hazard Classification Output -->
+          <div class="hazard-classification-pill" style="padding: 4px 8px; font-size: 0.76rem;">
+            <span class="material-symbols-outlined" style="font-size: 15px; color: var(--tertiary);" id="dispatch-ambient-hazard-icon">volume_up</span>
+            <span style="font-weight: 600;" id="dispatch-ambient-hazard-classified">Safe Ambient Background • 14 dB</span>
+          </div>
+
+          <!-- Simulation Chips for Acoustic Distress Testing -->
+          <div style="margin-top: 0.25rem;">
+            <span style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 3px;">Simulate Audio Intensity & Screaming Fluctuations:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 3px;">
+              <button type="button" class="filter-chip ambient-sim-chip" data-hazard="scream" data-score="95" style="font-size: 10px; padding: 2px 7px; border-color: rgba(239,68,68,0.7); background: rgba(239,68,68,0.18); color: #ffb4ab; font-weight: 700;">
+                😱 Female Scream (95)
+              </button>
+              <button type="button" class="filter-chip ambient-sim-chip" data-hazard="shout" data-score="90" style="font-size: 10px; padding: 2px 6px; border-color: rgba(239,68,68,0.4); color: var(--error);">
+                📢 Shouting (90)
+              </button>
+              <button type="button" class="filter-chip ambient-sim-chip" data-hazard="glass" data-score="86" style="font-size: 10px; padding: 2px 6px; border-color: rgba(251,191,36,0.4); color: var(--warning);">
+                💥 Glass (86)
+              </button>
+              <button type="button" class="filter-chip ambient-sim-chip" data-hazard="calm" data-score="14" style="font-size: 10px; padding: 2px 6px; border-color: rgba(78,222,163,0.4); color: var(--tertiary);">
+                🍃 Safe (14)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Action Controls (Positioned Sequentially After Scrolling Down) -->
+      <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08);">
+        
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.88rem; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.04em;">Emergency Response Controls</span>
+          <span style="font-size: 10.5px; color: var(--tertiary); font-weight: 700;">● LIVE DISPATCH</span>
+        </div>
+
+        <!-- Emergency Action Buttons Grid (Call 911, Call Emergency Contacts, Siren) -->
+        <div style="display: grid; grid-template-columns: 1fr 1.2fr 0.8fr; gap: 0.5rem;">
+          <a href="tel:911" class="filter-chip" id="btn-direct-911" style="padding: 0.75rem 0.4rem; background: linear-gradient(135deg, #b91c1c, #ef4444); color: #ffffff; text-align: center; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-md); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);">
+            <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>
+            <span style="font-size: 0.82rem;">Call 911</span>
+          </a>
+          <button class="filter-chip" id="btn-dispatch-call-guardian" style="padding: 0.75rem 0.4rem; border-color: var(--primary); background: rgba(107, 216, 203, 0.12); color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-md);">
+            <span class="material-symbols-outlined" style="font-size: 18px;">contact_phone</span>
+            <span style="font-size: 0.78rem;" id="dispatch-call-contacts-label">Call Emergency Contacts</span>
+          </button>
+          <button class="filter-chip" id="btn-toggle-siren" style="padding: 0.75rem 0.4rem; border-color: var(--warning); background: rgba(251, 191, 36, 0.1); color: var(--warning); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: var(--radius-md);">
+            <span class="material-symbols-outlined" style="font-size: 18px;">volume_up</span>
+            <span style="font-size: 0.8rem;">Siren</span>
+          </button>
+        </div>
+
+        <!-- Saved Emergency Contacts Live Relay Status Card -->
+        <div style="background: var(--bg-container-low); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-md); padding: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined" style="font-size: 16px; color: var(--tertiary);">notifications_active</span>
+              <span style="font-size: 0.78rem; font-weight: 700; color: #ffffff;">Guardians Connected & Telemetry Relayed</span>
+            </div>
+            <span style="font-size: 10px; color: var(--tertiary); font-weight: 700;">3 NOTIFIED</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.76rem; color: var(--text-on-surface-variant);">
+            <span>Sarah Rostova (Parent) • Marcus Vance (Partner)</span>
+            <span style="color: var(--primary); font-weight: 600;">GPS & Audio Live</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Encrypted Footer Note -->
+      <div style="text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.6rem; padding-bottom: 1.5rem;">
+        GuardianX Autonomous Incident Stream • Encrypted Session #GX-99201 • 24/7 Cloud Relay
+      </div>
+
+    </div>
+
+
+    <!-- 3. Safe PIN Entry Modal Dialog -->
+    <div class="fullscreen-overlay" id="pin-modal" style="background: rgba(11, 19, 38, 0.98); justify-content: center;">
+      <div style="max-width: 320px; width: 100%; margin: 0 auto; text-align: center;" id="pin-box-wrap">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-container-high); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+          <span class="material-symbols-outlined" style="font-size: 26px;">lock</span>
+        </div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Enter Safe PIN</h2>
+        <p style="font-size: 0.8rem; color: var(--text-on-surface-variant);">Enter your 4-digit code to de-escalate emergency mode (Default: 1234).</p>
+
+        <div class="pin-dots-row">
+          <span class="pin-dot-indicator"></span>
+          <span class="pin-dot-indicator"></span>
+          <span class="pin-dot-indicator"></span>
+          <span class="pin-dot-indicator"></span>
+        </div>
+
+        <div class="pin-pad-grid">
+          <button class="pin-key" data-val="1">1</button>
+          <button class="pin-key" data-val="2">2</button>
+          <button class="pin-key" data-val="3">3</button>
+          <button class="pin-key" data-val="4">4</button>
+          <button class="pin-key" data-val="5">5</button>
+          <button class="pin-key" data-val="6">6</button>
+          <button class="pin-key" data-val="7">7</button>
+          <button class="pin-key" data-val="8">8</button>
+          <button class="pin-key" data-val="9">9</button>
+          <button class="pin-key" data-val="cancel" style="font-size: 0.9rem; color: var(--text-muted);">ESC</button>
+          <button class="pin-key" data-val="0">0</button>
+          <button class="pin-key" data-val="back">
+            <span class="material-symbols-outlined" style="font-size: 22px;">backspace</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 4. Threat Escalation Alert Modal -->
+    <div class="fullscreen-overlay" id="threat-modal" style="background: rgba(11, 19, 38, 0.95); justify-content: center;">
+      <div class="safety-card" style="border: 2px solid var(--warning); max-width: 360px; width: 100%; margin: 0 auto; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--warning-container); color: var(--warning); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+          <span class="material-symbols-outlined" style="font-size: 28px;">warning</span>
+        </div>
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Threat Anomaly Flagged</h2>
+        <p style="font-size: 0.85rem; color: var(--warning); font-weight: 600; margin-bottom: 0.5rem;" id="threat-modal-message">Route Deviation Flagged • 420m off verified corridor</p>
+        <p style="font-size: 0.8rem; color: var(--text-on-surface-variant); margin-bottom: 1.25rem;">
+          Arya Sentinel recommends rerouting to the nearest illuminated safe point or alerting your guardians.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <button class="btn-affirmative-safe" id="btn-threat-reroute" style="padding: 0.75rem; font-size: 0.95rem;">
+            <span class="material-symbols-outlined">alt_route</span>
+            <span>Reroute to St. Mary Safe Kiosk (180m)</span>
+          </button>
+          <button style="padding: 0.75rem; border-radius: var(--radius-lg); background: var(--bg-container-high); border: 1px solid rgba(239,68,68,0.4); color: var(--error); font-weight: 700; cursor: pointer;" id="btn-threat-escalate-sos">
+            Escalate to Instant SOS
+          </button>
+          <button style="background: none; border: none; color: var(--text-muted); font-size: 0.8rem; padding: 4px; cursor: pointer;" id="btn-threat-dismiss">
+            False Alarm (I'm Fine)
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 5. Silent Check-In Modal -->
+    <div class="fullscreen-overlay" id="silent-checkin-modal" style="background: rgba(6, 14, 32, 0.95); justify-content: center;">
+      <div class="safety-card" style="max-width: 340px; width: 100%; margin: 0 auto; text-align: center; border-color: rgba(107,216,203,0.3);">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(107,216,203,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+          <span class="material-symbols-outlined" style="font-size: 26px;">touch_app</span>
+        </div>
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Silent Check-In</h2>
+        <p style="font-size: 0.8rem; color: var(--text-on-surface-variant); margin-bottom: 1.25rem;">
+          Quick 1-tap confirmation. If not answered in 30s, Arya will discreetly escalate telemetry to your circle.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <button class="btn-affirmative-safe" id="btn-silent-all-good" style="padding: 0.75rem;">
+            <span class="material-symbols-outlined symbol-fill">thumb_up</span>
+            <span>I'm Good • All Clear</span>
+          </button>
+          <button style="padding: 0.75rem; border-radius: var(--radius-lg); background: var(--bg-container-high); border: 1px solid rgba(239,68,68,0.4); color: var(--error); font-weight: 700; cursor: pointer;" id="btn-silent-need-help">
+            I Need Assistance
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 6. Fake Voice / Deception Caller Modal -->
+    <div class="fullscreen-overlay" id="fake-call-modal" style="background: rgba(6, 12, 26, 0.97); justify-content: center;">
+      <div class="fake-call-card" id="fake-call-card">
+        
+        <!-- PHASE A: Incoming Call Ringing View -->
+        <div id="fake-call-incoming-view" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-full); background: rgba(107,216,203,0.15); border: 1px solid rgba(107,216,203,0.3);">
+            <span class="arya-dot"></span>
+            <span style="font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase;">GuardianX Deception Protocol</span>
+          </div>
+
+          <div class="caller-avatar-ring">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&auto=format&fit=crop&q=80" alt="Caller" class="caller-avatar-circle" id="fake-caller-avatar-incoming">
+          </div>
+
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0;" id="fake-caller-name-incoming">Marcus (Guardian)</h2>
+            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 600;" id="fake-caller-role-incoming">Incoming Priority Call • Active Escort</span>
+          </div>
+
+          <p style="font-size: 0.78rem; color: var(--text-on-surface-variant); max-width: 280px; margin: 0 auto;">
+            Simulated incoming deterrent call to safely distract, deter aggressors, or exit uncomfortable environments.
+          </p>
+
+          <div style="display: flex; align-items: center; justify-content: space-around; width: 100%; margin-top: 0.75rem; padding: 0 1.5rem;">
+            <button class="btn-fake-call-decline" id="btn-fake-call-decline" title="Decline Call">
+              <span class="material-symbols-outlined" style="font-size: 30px;">call_end</span>
+            </button>
+
+            <button class="btn-fake-call-accept" id="btn-fake-call-accept" title="Accept Call">
+              <span class="material-symbols-outlined" style="font-size: 30px;">call</span>
+            </button>
+          </div>
+          <div style="display: flex; justify-content: space-between; width: 100%; padding: 0 1.5rem; font-size: 11px; color: var(--text-muted);">
+            <span style="color: #ff9b9b;">Decline</span>
+            <span style="color: #4edea3;">Answer Call</span>
+          </div>
+        </div>
+
+        <!-- PHASE B: Active Ongoing Call View (With Animated Waveform Visualizer & Speech Audio) -->
+        <div id="fake-call-active-view" style="width: 100%; display: none; flex-direction: column; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="ping-dot" style="background: var(--tertiary); box-shadow: 0 0 10px var(--tertiary);"></span>
+              <span style="font-size: 11px; font-weight: 700; color: var(--tertiary); text-transform: uppercase;">Call Connected</span>
+            </div>
+            <span style="font-size: 1.1rem; font-weight: 800; color: #ffffff;" id="fake-call-duration-timer">00:00</span>
+          </div>
+
+          <div class="caller-avatar-ring" style="margin: 0.25rem 0;">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&auto=format&fit=crop&q=80" alt="Caller" class="caller-avatar-circle" id="fake-caller-avatar-active">
+          </div>
+
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin: 0;" id="fake-caller-name-active">Marcus (Guardian)</h3>
+            <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;" id="fake-caller-role-active">Arya Deterrent Audio Stream Active</span>
+          </div>
+
+          <!-- Animated Voice / Waveform Visualizer -->
+          <div class="waveform-visualizer" id="fake-call-waveform">
+            <span class="waveform-bar wave-anim-1"></span>
+            <span class="waveform-bar wave-anim-2"></span>
+            <span class="waveform-bar wave-anim-3"></span>
+            <span class="waveform-bar wave-anim-4"></span>
+            <span class="waveform-bar wave-anim-5"></span>
+            <span class="waveform-bar wave-anim-1"></span>
+            <span class="waveform-bar wave-anim-3"></span>
+            <span class="waveform-bar wave-anim-2"></span>
+            <span class="waveform-bar wave-anim-4"></span>
+            <span class="waveform-bar wave-anim-5"></span>
+            <span class="waveform-bar wave-anim-2"></span>
+            <span class="waveform-bar wave-anim-1"></span>
+            <span class="waveform-bar wave-anim-3"></span>
+            <span class="waveform-bar wave-anim-4"></span>
+            <span class="waveform-bar wave-anim-2"></span>
+            <span class="waveform-bar wave-anim-5"></span>
+          </div>
+
+          <!-- Real-Time Voice Subtitles / Speech Transcript -->
+          <div style="background: rgba(11, 19, 38, 0.85); border-radius: var(--radius-md); padding: 0.75rem; border: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+              <span style="font-size: 10.5px; font-weight: 700; color: var(--tertiary); text-transform: uppercase;">Synthesized Voice Audio</span>
+              <span style="font-size: 10px; color: var(--primary); font-weight: 600;" id="fake-call-speech-status">Speaking via Speaker...</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #ffffff; margin: 0; line-height: 1.35; font-weight: 500;" id="fake-call-transcript-text">
+              "Hey! I see you right there at Bush and Montgomery. I'm in the car right behind you, wait right there, I'm pulling over now!"
+            </p>
+          </div>
+
+          <!-- Persona Selector Dropdown -->
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px;">
+            <button type="button" class="filter-chip fake-persona-chip active" data-persona="partner" style="font-size: 10.5px; padding: 4px 8px;">🚗 Partner (Marcus)</button>
+            <button type="button" class="filter-chip fake-persona-chip" data-persona="police" style="font-size: 10.5px; padding: 4px 8px;">👮 SFPD Police</button>
+            <button type="button" class="filter-chip fake-persona-chip" data-persona="dad" style="font-size: 10.5px; padding: 4px 8px;">👨‍👩‍👧 Dad</button>
+          </div>
+
+          <!-- Next Line / Speaker Actions -->
+          <div style="display: flex; gap: 0.5rem; width: 100%;">
+            <button type="button" class="filter-chip" id="btn-fake-speak-next" style="flex: 1; padding: 0.6rem; font-weight: 700; border-color: var(--primary); color: var(--primary);">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">volume_up</span> Speak Next Line
+            </button>
+            <button type="button" class="filter-chip" id="btn-fake-toggle-speaker" style="padding: 0.6rem 0.8rem; font-weight: 700;">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">campaign</span> Boost
+            </button>
+          </div>
+
+          <!-- End Call Button -->
+          <button type="button" class="btn-fake-call-decline" id="btn-fake-call-end" title="End Call" style="width: 100%; height: 48px; border-radius: var(--radius-lg); font-weight: 700; font-size: 0.95rem; gap: 6px; display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+            <span class="material-symbols-outlined" style="font-size: 22px;">call_end</span>
+            <span>End Call • I Am Safe</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 7. Add / Edit Emergency Contact Modal -->
+    <div class="fullscreen-overlay" id="contact-modal" style="background: rgba(11, 19, 38, 0.96); justify-content: center;">
+      <div class="contact-modal-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(107,216,203,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined" style="font-size: 20px;">person_add</span>
+            </div>
+            <div>
+              <h2 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 0;" id="contact-modal-title">Add Emergency Contact</h2>
+              <span style="font-size: 11px; color: var(--text-on-surface-variant);">Instant distress relay & live journey guardian</span>
+            </div>
+          </div>
+          <button class="icon-btn" id="btn-close-contact-modal" title="Close" style="width: 32px; height: 32px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+          </button>
+        </div>
+
+        <form id="contact-form" style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <input type="hidden" id="contact-id-input" value="">
+
+          <!-- Full Name -->
+          <div class="form-group-wrap">
+            <label class="form-label" for="contact-name-input">Full Name *</label>
+            <input type="text" class="form-input" id="contact-name-input" placeholder="e.g. Sarah Rostova" required autocomplete="name">
+          </div>
+
+          <!-- Relationship -->
+          <div class="form-group-wrap">
+            <label class="form-label" for="contact-relationship-input">Relationship *</label>
+            <select class="form-select" id="contact-relationship-input" required>
+              <option value="Parent">Parent</option>
+              <option value="Spouse">Spouse</option>
+              <option value="Partner">Partner</option>
+              <option value="Child">Child</option>
+              <option value="Sibling">Sibling</option>
+              <option value="Friend">Friend</option>
+              <option value="Guardian">Guardian</option>
+              <option value="Colleague">Colleague</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group-wrap">
+            <label class="form-label" for="contact-phone-input">Phone Number (with Country Code) *</label>
+            <input type="tel" class="form-input" id="contact-phone-input" placeholder="+1 (555) 018-8291" required autocomplete="tel">
+            <span id="contact-phone-error" style="display: none; font-size: 11px; color: var(--error); font-weight: 600; margin-top: 2px;"></span>
+          </div>
+
+          <!-- Email Address (Optional) -->
+          <div class="form-group-wrap">
+            <label class="form-label" for="contact-email-input">Email Address (Optional)</label>
+            <input type="email" class="form-input" id="contact-email-input" placeholder="sarah.rostova@family.net" autocomplete="email">
+          </div>
+
+          <!-- Primary / Priority Toggle -->
+          <div class="toggle-switch-row">
+            <div>
+              <strong style="font-size: 0.85rem; color: #ffffff; display: block;">Primary Emergency Contact</strong>
+              <span style="font-size: 11px; color: var(--text-muted);">First contacted on critical SOS trigger</span>
+            </div>
+            <label class="switch-control">
+              <input type="checkbox" id="contact-primary-toggle">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <!-- Form Actions -->
+          <div style="display: flex; gap: 0.65rem; margin-top: 0.5rem;">
+            <button type="button" class="filter-chip" id="btn-cancel-contact-modal" style="flex: 1; padding: 0.75rem; text-align: center; font-weight: 600;">
+              Cancel
+            </button>
+            <button type="submit" class="btn-affirmative-safe" style="flex: 2; padding: 0.75rem; font-size: 0.95rem;">
+              <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+              <span>Save Contact</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ================= BOTTOM TAB NAVIGATION DOCK ================= -->
+    <nav class="bottom-nav-dock">
+      <div class="nav-tabs-row">
+        <!-- Tab 1: Home -->
+        <button class="nav-tab-btn active" data-path="home" aria-label="Home Dashboard">
+          <div class="tab-icon-wrap">
+            <span class="material-symbols-outlined">home</span>
+          </div>
+          <span class="tab-label">Home</span>
+        </button>
+
+        <!-- Tab 2: Safety Map -->
+        <button class="nav-tab-btn" data-path="safety-map" aria-label="Nearby Safety Map">
+          <div class="tab-icon-wrap">
+            <span class="material-symbols-outlined">explore</span>
+          </div>
+          <span class="tab-label">Safety Map</span>
+        </button>
+
+        <!-- Center Floating SOS Button -->
+        <div class="nav-center-sos">
+          <button class="nav-sos-floating-btn" id="nav-sos-floating-btn" aria-label="Trigger Immediate Emergency SOS">
+            <span class="material-symbols-outlined symbol-fill" style="font-size: 30px;">emergency</span>
+          </button>
+        </div>
+
+        <!-- Tab 3: Safe Ride -->
+        <button class="nav-tab-btn" data-path="safe-ride" aria-label="Safe Ride Escort">
+          <div class="tab-icon-wrap">
+            <span class="material-symbols-outlined">directions_car</span>
+          </div>
+          <span class="tab-label">Safe Ride</span>
+        </button>
+
+        <!-- Tab 4: AI Monitoring -->
+        <button class="nav-tab-btn" data-path="monitoring" aria-label="AI Distress Monitoring">
+          <div class="tab-icon-wrap">
+            <span class="material-symbols-outlined">shield_with_heart</span>
+          </div>
+          <span class="tab-label">Monitoring</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+  </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- Application ES Modules -->
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
